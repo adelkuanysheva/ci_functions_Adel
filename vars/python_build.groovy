@@ -20,20 +20,32 @@ def call(service, dockerRepoName, imageName) {
                 steps {
                     withCredentials([string(credentialsId: 'DockerHub', variable: 'TOKEN')]) {
                         sh "docker login -u 'adelkuanysheva' -p '$TOKEN' docker.io"
-                        dir("${service}") {
-                            sh "docker build -t ${dockerRepoName}:latest --tag adelkuanysheva/${dockerRepoName}:${imageName} ."
-                        }
-                        sh "docker push adelkuanysheva/${dockerRepoName}:${imageName}"
+                        sh "docker build -t ${dockerRepoName}:latest --tag adelkuanysheva/${dockerRepoName}:latest ."
+                        sh "docker push adelkuanysheva/${dockerRepoName}:latest"
                     }
                 }
             }
 
-            stage('Scan image') {
-                neuvector registrySelection: 'Local', repository: 'alpine'
+            stage('Zip Artifacts') {
+                steps {
+                    sh 'zip app.zip *.py'
+                }
+                post {
+                    always {
+                        archiveArtifacts artifacts: 'app.zip'
+                    }
+                }
             }
 
-
-
+            stage('Deploy') {
+                steps {
+                    sshagent(credentials : ['AdelVM3855']) {
+                        sh "ssh -o StrictHostKeyChecking=no kafka-acit3855.westus3.cloudapp.azure.com 'cd acit3855/deployment/; docker-compose down; docker image rm adelkuanysheva/${dockerRepoName}:latest;'"
+                        sh "ssh -o StrictHostKeyChecking=no kafka-acit3855.westus3.cloudapp.azure.com 'docker pull adelkuanysheva/${dockerRepoName}:latest;'"
+                        sh "ssh -o StrictHostKeyChecking=no kafka-acit3855.westus3.cloudapp.azure.com 'cd acit3855/deployment/; docker-compose up -d'"
+                    }
+                }
+            }
 
         }
     }
