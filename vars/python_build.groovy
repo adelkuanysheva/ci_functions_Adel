@@ -18,7 +18,7 @@ def call(service, dockerRepoName, imageName) {
                     expression { env.GIT_BRANCH == 'origin/master' }
                 }
                 steps {
-                    withCredentials([string(credentialsId: 'DockerHub', variable: 'TOKEN')]) {
+                    withCredentials([string(credentialsId: 'AdelDockerhub', variable: 'TOKEN')]) {
                         sh "docker login -u 'adelkuanysheva' -p '$TOKEN' docker.io"
                         sh "docker build -t ${dockerRepoName}:latest --tag adelkuanysheva/${dockerRepoName}:latest ."
                         sh "docker push adelkuanysheva/${dockerRepoName}:latest"
