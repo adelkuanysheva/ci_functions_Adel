@@ -40,9 +40,9 @@ def call(service, dockerRepoName, imageName) {
             stage('Deploy') {
                 steps {
                     sshagent(credentials : ['AdelVM3855']) {
-                        sh "ssh -o StrictHostKeyChecking=no kafka-acit3855.westus3.cloudapp.azure.com 'cd acit3855/deployment/; docker-compose down; docker image rm adelkuanysheva/${dockerRepoName}:latest;'"
-                        sh "ssh -o StrictHostKeyChecking=no kafka-acit3855.westus3.cloudapp.azure.com 'docker pull adelkuanysheva/${dockerRepoName}:latest;'"
-                        sh "ssh -o StrictHostKeyChecking=no kafka-acit3855.westus3.cloudapp.azure.com 'cd acit3855/deployment/; docker-compose up -d'"
+                        sh "ssh -o StrictHostKeyChecking=no azureuser@kafka-acit3855.westus3.cloudapp.azure.com 'cd acit3855/deployment/; docker-compose down; docker image rm adelkuanysheva/${dockerRepoName}:latest;'"
+                        sh "ssh -o StrictHostKeyChecking=no azureuser@kafka-acit3855.westus3.cloudapp.azure.com 'docker pull adelkuanysheva/${dockerRepoName}:latest;'"
+                        sh "ssh -o StrictHostKeyChecking=no azureuser@kafka-acit3855.westus3.cloudapp.azure.com 'cd acit3855/deployment/; docker-compose up -d'"
                     }
                 }
             }
