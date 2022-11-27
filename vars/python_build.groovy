@@ -15,7 +15,7 @@ def call(service, dockerRepoName, imageName) {
 
             stage('Package') {
                 when {
-                    expression { env.GIT_BRANCH == 'origin/main' }
+                    expression { env.GIT_BRANCH == 'origin/master' }
                 }
                 steps {
                     withCredentials([string(credentialsId: 'DockerHub', variable: 'TOKEN')]) {
@@ -28,18 +28,10 @@ def call(service, dockerRepoName, imageName) {
                 }
             }
 
-            stage('Docker Lint') {
-                agent{
-                    docker {
-                        image 'hadolint/hadolint:latest-debian'
-                    }
-                }
-                steps {
-                    dir("${service}") {
-                        sh "hadolint --ignore DL3008 --ignore DL3009 --ignore DL3015 --ignore DL3042 Dockerfile"
-                    }
-                }
+            stage('Scan image') {
+                neuvector registrySelection: 'Local', repository: 'alpine'
             }
+
 
 
 
